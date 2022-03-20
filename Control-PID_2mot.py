@@ -79,11 +79,10 @@ class PID(object):
         return self.output
 
 class Motor(object):
-    def __init__(self, vertiq, KP, KI, KD, target, motorOff, motorDir):
+    def __init__(self, vertiq, KP, KI, KD, target, motorOff):
         global Motor
         self.velocity = 0
         self.vertiq = vertiq
-        self.motorDir = motorDir
         self.PID = PID(KP, KI, KD, target, motorOff)
 
     def set_velocity(self, velocity):
@@ -96,8 +95,8 @@ def graph(x,y):
     plt.plot(x, y)
     plt.show()
 
-motor1 = Motor(vertiq1, P, I, D, targetSpeed, motorOff1, motorDir1)
-motor2 = Motor(vertiq2, P, I, D, targetSpeed, motorOff2, motorDir2)
+motor1 = Motor(vertiq1, P, I, D, targetSpeed, motorOff1)
+motor2 = Motor(vertiq2, P, I, D, targetSpeed, motorOff2)
 #motor3 = Motor(vertiq3, P, I, D, targetSpeed, motorOff3)
 #motor4 = Motor(vertiq4, P, I, D, targetSpeed, motorOff4)
 motors = [motor1, motor2]#, motor3, motor4]
@@ -113,7 +112,7 @@ time.sleep(1.5)
 startTime = time.time()
 
 for motor in motors:
-    motor.vertiq.set("multi_turn_angle_control", "ctrl_velocity", targetSpeed*motor.motorDir)
+    motor.vertiq.set("multi_turn_angle_control", "ctrl_velocity", targetSpeed)
     motor.PID.startTime = startTime
     motor.PID.prevTime = startTime
 
