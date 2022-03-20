@@ -47,11 +47,11 @@ D = .1
 # 1,1,.1
 
 class PID(object):
-    def __init__(self, KP, KI, KD, target, motorOff):
+    def __init__(self, KP, KI, KD, target, motorOff, motorDir):
         self.kp = KP
         self.ki = KI
         self.kd = KD
-        self.target = target
+        self.target = target * motorDir
         self.error = 0
         self.error_integral = 0
         self.error_last = 0
@@ -60,6 +60,7 @@ class PID(object):
         self.prevTime = 0
         self.currentTime = 0
         self.motorOffset = motorOff
+        self.motorDir = motorDir
         self.startTime = 0
    
     def compute(self, position):
@@ -79,11 +80,11 @@ class PID(object):
         return self.output
 
 class Motor(object):
-    def __init__(self, vertiq, KP, KI, KD, target, motorOff):
+    def __init__(self, vertiq, KP, KI, KD, target, motorOff, motorDir):
         global Motor
         self.velocity = 0
         self.vertiq = vertiq
-        self.PID = PID(KP, KI, KD, target, motorOff)
+        self.PID = PID(KP, KI, KD, target, motorOff,motorDir)
 
     def set_velocity(self, velocity):
         self.velocity = velocity
@@ -95,8 +96,8 @@ def graph(x,y):
     plt.plot(x, y)
     plt.show()
 
-motor1 = Motor(vertiq1, P, I, D, targetSpeed, motorOff1)
-motor2 = Motor(vertiq2, P, I, D, targetSpeed, motorOff2)
+motor1 = Motor(vertiq1, P, I, D, targetSpeed, motorOff1, motorDir1)
+motor2 = Motor(vertiq2, P, I, D, targetSpeed, motorOff2, motorDir2)
 #motor3 = Motor(vertiq3, P, I, D, targetSpeed, motorOff3)
 #motor4 = Motor(vertiq4, P, I, D, targetSpeed, motorOff4)
 motors = [motor1, motor2]#, motor3, motor4]
