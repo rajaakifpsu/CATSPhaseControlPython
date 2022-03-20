@@ -24,6 +24,8 @@ vertiq2 = iq.Vertiq8108(com2, 0, firmware="servo")
 # vertiq4 = iq.Vertiq2306(com4, 0, firmware="servo")
 vertiqs = [vertiq1, vertiq2]
 
+
+
 # Target Speed (rad/s)
 targetSpeed = 50
 
@@ -32,7 +34,7 @@ time_step = .0001
 
 # Angle offset
 motorOff1 = 0 #motor1 bottom
-motorOff2 = .47 #motor2 top
+motorOff2 = .40 #motor2 top
 #motorOff3 = 0
 #motorOff4 = 0
 
@@ -105,6 +107,11 @@ motor2 = Motor(vertiq2, P, I, D, targetSpeed, motorOff2, motorDir2)
 #motor3 = Motor(vertiq3, P, I, D, targetSpeed, motorOff3)
 #motor4 = Motor(vertiq4, P, I, D, targetSpeed, motorOff4)
 motors = [motor1, motor2]#, motor3, motor4]
+
+
+for motor in motors:
+    motor.vertiq.set("multi_turn_angle_control", "trajectory_angular_displacement", 0)
+    motor.vertiq.set("multi_turn_angle_control", "trajectory_duration", 1)
 
 # Set initial speed of motors
 for motor in motors:
