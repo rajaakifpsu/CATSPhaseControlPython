@@ -9,8 +9,8 @@ import matplotlib.pyplot as plt
 import turtle
 
 # Setup com ports (Subject to change based on where USB is plugged in)
-com1 = iq.SerialCommunicator("COM12")
-com2 = iq.SerialCommunicator("COM13")
+com1 = iq.SerialCommunicator("COM12") #motor1 bot      ***check these before running!!!!!!!
+com2 = iq.SerialCommunicator("COM13") #motor2 top 
 
 # com1 = iq.SerialCommunicator("/dev/cu.usbserial-14510")
 # com2 = iq.SerialCommunicator("/dev/cu.usbserial-14520")
@@ -25,14 +25,14 @@ vertiq2 = iq.Vertiq8108(com2, 0, firmware="servo")
 vertiqs = [vertiq1, vertiq2]
 
 # Target Speed (rad/s)
-targetSpeed = 1
+targetSpeed = 50
 
 # How often to update motors
 time_step = .0001
 
 # Angle offset
-motorOff1 = 0
-motorOff2 = 0.43 #-4.79
+motorOff1 = 0 #motor1 bottom
+motorOff2 = .47 #motor2 top
 #motorOff3 = 0
 #motorOff4 = 0
 
@@ -84,6 +84,7 @@ class Motor(object):
         global Motor
         self.velocity = 0
         self.vertiq = vertiq
+        self.motorOffset = motorOff
         self.PID = PID(KP, KI, KD, target, motorOff,motorDir)
 
     def set_velocity(self, velocity):
@@ -91,6 +92,9 @@ class Motor(object):
    
     def get_velocity(self):
         return self.velocity
+    
+    def get_offset(self):
+        return self.motorOffset
 
 def graph(x,y):
     plt.plot(x, y)
@@ -104,7 +108,7 @@ motors = [motor1, motor2]#, motor3, motor4]
 
 # Set initial speed of motors
 for motor in motors:
-    motor.vertiq.set("multi_turn_angle_control", "trajectory_angular_displacement", 0)
+    motor.vertiq.set("multi_turn_angle_control", "trajectory_angular_displacement", motor.motorOffset)
     motor.vertiq.set("multi_turn_angle_control", "trajectory_duration", 1)
 
 time.sleep(1.5)
