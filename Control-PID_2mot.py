@@ -34,7 +34,7 @@ time_step = .0001
 
 # Angle offset
 motorOff1 = 0 #motor1 bottom
-motorOff2 = .40 #motor2 top
+motorOff2 = .43 #motor2 top
 #motorOff3 = 0
 #motorOff4 = 0
 
@@ -110,8 +110,10 @@ motors = [motor1, motor2]#, motor3, motor4]
 
 
 for motor in motors:
+    motor.vertiq.set("multi_turn_angle_control", "ctrl_velocity", 0)
     motor.vertiq.set("multi_turn_angle_control", "trajectory_angular_displacement", 0)
     motor.vertiq.set("multi_turn_angle_control", "trajectory_duration", 1)
+time.sleep(1.5)
 
 # Set initial speed of motors
 for motor in motors:
@@ -153,3 +155,7 @@ while (True):
 
 
 # graph(times, poses)
+def resetVar():
+    global traj_pos
+    traj_pos 
+    
