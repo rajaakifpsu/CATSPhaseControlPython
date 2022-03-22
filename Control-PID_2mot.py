@@ -9,8 +9,8 @@ import matplotlib.pyplot as plt
 import turtle
 
 # Setup com ports (Subject to change based on where USB is plugged in)
-com1 = iq.SerialCommunicator("COM12") #motor1 bot      ***check these before running!!!!!!!
-com2 = iq.SerialCommunicator("COM13") #motor2 top 
+com1 = iq.SerialCommunicator("/dev/tty.usbserial-AB63836A") #bottom motor # "COM12" #port 2 on macbook adapter
+com2 = iq.SerialCommunicator("/dev/tty.usbserial-AB5X22Z3") #top motor #"COM13" #port 3 on macbook adapter 
 
 # com1 = iq.SerialCommunicator("/dev/cu.usbserial-14510")
 # com2 = iq.SerialCommunicator("/dev/cu.usbserial-14520")
