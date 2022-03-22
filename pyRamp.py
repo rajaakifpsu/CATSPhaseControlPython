@@ -12,7 +12,7 @@ com2 = iq.SerialCommunicator("/dev/tty.usbserial-AB5X22Z3") #top motor #"COM13" 
 
 # Angle offset
 motorOff1 = 0
-motorOff2 = 0.43 #0.43-0.47 
+motorOff2 = 0.47 #0.43-0.47 
 
 #Motor direction
 motorDir1 = 1
@@ -26,7 +26,7 @@ vertiq2 = iq.Vertiq8108(com2, 0, firmware="servo")
 vertiqs = [vertiq1, vertiq2]
 
 # Target Speed (rad/s)
-targetSpeed = 15 #no decimals
+targetSpeed = 10 #no decimals
 
 # Test Duration
 testDuration = 5 #seconds 
