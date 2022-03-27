@@ -27,10 +27,13 @@ vertiqs = [vertiq1, vertiq2]
 
 
 # Target Speed (rad/s)
-targetSpeed = 50
+targetSpeed = 15
 
 # How often to update motors
 time_step = .0001
+
+# Test Duration
+testDuration = 5 #seconds 
 
 # Angle offset
 motorOff1 = 0 #motor1 bottom
