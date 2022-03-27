@@ -26,7 +26,7 @@ vertiq2 = iq.Vertiq8108(com2, 0, firmware="servo")
 vertiqs = [vertiq1, vertiq2]
 
 # Target Speed (rad/s)
-targetSpeed = 2 #no decimals
+targetSpeed = 10 #no decimals
 
 # Test Duration
 testDuration = 5 #seconds 
@@ -68,22 +68,22 @@ motor1.vertiq.set("multi_turn_angle_control", "ctrl_velocity", 0)
 motor1.vertiq.set("multi_turn_angle_control", "trajectory_angular_displacement", 0)
 motor1.vertiq.set("multi_turn_angle_control", "trajectory_duration", 5)
 motor1.vertiq.set("multi_turn_angle_control", "angular_speed_max", targetSpeed+5) #check later
-#time.sleep(2)
+time.sleep(2)
 motor2.vertiq.set("multi_turn_angle_control", "ctrl_velocity", 0)
 motor2.vertiq.set("multi_turn_angle_control", "trajectory_angular_displacement", 0)
 motor2.vertiq.set("multi_turn_angle_control", "trajectory_duration", 5)
 motor2.vertiq.set("multi_turn_angle_control", "angular_speed_max", targetSpeed+5) #check later
-#time.sleep(2) #put in a delay between the two motors. Begin the top motor  
+time.sleep(2) #put in a delay between the two motors. Begin the top motor  
 
 #set top motor to always hold at the new value
 motor2.vertiq.set("multi_turn_angle_control", "trajectory_angular_displacement", motorOff2)
 motor2.vertiq.set("multi_turn_angle_control", "trajectory_duration", 5)
-time.sleep(1)
+time.sleep(5)
 
 # Store start time of Program
 startTime = time.time()
 
-#time.sleep(3)
+time.sleep(3)
 
 #begin standard control
 motor1.vertiq.set("multi_turn_angle_control", "ctrl_velocity", targetSpeed) 

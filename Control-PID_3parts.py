@@ -59,6 +59,8 @@ I = .5
 D = .1
 # 1,1,.1
 
+
+#make a cw PID and ccw PID make ccw position - time*target
 class PID(object):
     def __init__(self, KP, KI, KD, target, motorOff, motorDir):
         self.kp = KP
@@ -172,6 +174,7 @@ for motor in motors:
     #motor.vertiq.set("multi_turn_angle_control", "ctrl_velocity", targetSpeed)
     motor.PID.startTime = startTime
     motor.PID.prevTime = startTime
+    time.sleep(.005)
 #PID
 print("Now Beginning PID-Phase Control\n")
 print("Press S to stop test\n")
@@ -207,7 +210,7 @@ while PID:
             #     poses = np.append(poses, velocity)
             #     times = np.append(times, motor1.PID.currentTime)
             # """
-    if keyboard.is_pressed('s'):  # if key 'z' is pressed 
+    if keyboard.is_pressed('s'):  # if key 's' is pressed 
                 print("Test stopped\n")
                 PID = False
                 break  # finishing the loop
