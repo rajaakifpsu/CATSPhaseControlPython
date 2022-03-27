@@ -31,22 +31,26 @@ vertiqs = [vertiq1, vertiq2]
 pause = True
 PID = True
 
+#Motor direction
+motorDir1 = 1
+motorDir2 = -1
+
 # Target Speed (rad/s)
-targetSpeed = 10
+targetSpeed = 3
+targetSpeed1 = targetSpeed * motorDir1
+targetSpeed2 = targetSpeed * motorDir2
+#add input rpm to rad/s 
 
 # How often to update motors
 time_step = .0001
 
 # Angle offset
-testOffset = 0 #angle offset for test
+testOffset = 90 #angle offset for test *****DEGREES*****
 motorOff1 = 0 #motor1 bottom
-motorOff2 = .43+testOffset #motor2 top
+motorOff2 = .43+(testOffset*3.14/180) #motor2 top
 #motorOff3 = 0
 #motorOff4 = 0
 
-#Motor direction
-motorDir1 = 1
-motorDir2 = -1
 
 # P I D
 P = 1
@@ -73,9 +77,9 @@ class PID(object):
    
     def compute(self, position):
         self.currentTime = time.time()
-        self.error = ((self.currentTime-self.startTime) * self.target) - position + self.motorOffset
+        self.error = ((self.currentTime-self.startTime) * self.target) - position + self.motorOffset #need to fix to allow for neg values
         self.error_integral += self.error * (self.currentTime - self.prevTime)
-        self.error_derivative = (self.error - self.error_last) / (self.currentTime - self.prevTime)
+        self.error_derivative = self.motorDir*(self.error - self.error_last) / (self.currentTime - self.prevTime)
         self.error_last = self.error
         self.output = self.kp*self.error + self.ki*self.error_integral + self.kd*self.error_derivative
 
@@ -108,12 +112,22 @@ def graph(x,y):
     plt.plot(x, y)
     plt.show()
 
-motor1 = Motor(vertiq1, P, I, D, targetSpeed, motorOff1, motorDir1)
-motor2 = Motor(vertiq2, P, I, D, targetSpeed, motorOff2, motorDir2)
+motor1 = Motor(vertiq1, P, I, D, targetSpeed1, motorOff1, motorDir1)
+motor2 = Motor(vertiq2, P, I, D, targetSpeed2, motorOff2, motorDir2)
 #motor3 = Motor(vertiq3, P, I, D, targetSpeed, motorOff3)
 #motor4 = Motor(vertiq4, P, I, D, targetSpeed, motorOff4)
 motors = [motor1, motor2]#, motor3, motor4]
 
+
+# motor1.vertiq.set("multi_turn_angle_control", "ctrl_velocity", targetSpeed) 
+# motor1.vertiq.set("multi_turn_angle_control", "trajectory_angular_velocity", targetSpeed)
+# #motor1.vertiq.set("multi_turn_angle_control", "trajectory_duration", testDuration)
+# motor1.vertiq.set("multi_turn_angle_control", "trajectory_angular_displacement", 0) 
+
+
+#set max speed
+motor1.vertiq.set("multi_turn_angle_control", "angular_speed_max", targetSpeed)
+motor2.vertiq.set("multi_turn_angle_control", "angular_speed_max", targetSpeed)
 
 for motor in motors:
     motor.vertiq.set("multi_turn_angle_control", "ctrl_velocity", 0)
@@ -148,7 +162,7 @@ while i < targetSpeed: #Ramp up... wait for current == target speed
     motor2.vertiq.set("multi_turn_angle_control", "ctrl_velocity", -i)
     i = i + 1
     time.sleep(.05)
-    motor1.vertiq.set("multi_turn_angle_control", "ctrl_linear_displacement")
+    print(motor1.vertiq.get("multi_turn_angle_control", "ctrl_velocity"))
 
 #Hold speed... wait for keyboard input to start PID (Before data aqu starts)
 value = input("Press B to begin test\n")
