@@ -21,8 +21,8 @@ com2 = iq.SerialCommunicator("COM13") #top motor #"COM13" #port 3 on macbook ada
 # com4 = iq.SerialCommunicator("/dev/cu.usbserial-14540")
 
 # Initialize motors as IQ objects
-vertiq1 = iq.Vertiq8108(com1, 0, firmware="servo")
-vertiq2 = iq.Vertiq8108(com2, 0, firmware="servo")
+vertiq1 = iq.Vertiq8108(com1, 0, firmware="cats")
+vertiq2 = iq.Vertiq8108(com2, 0, firmware="cats")
 # vertiq3 = iq.Vertiq2306(com3, 0, firmware="servo")
 # vertiq4 = iq.Vertiq2306(com4, 0, firmware="servo")
 vertiqs = [vertiq1, vertiq2]
@@ -36,7 +36,7 @@ motorDir1 = 1
 motorDir2 = -1
 
 # Target Speed (rad/s)
-targetSpeed = 3
+targetSpeed = 5
 targetSpeed1 = targetSpeed * motorDir1
 targetSpeed2 = targetSpeed * motorDir2
 #add input rpm to rad/s 
@@ -46,6 +46,7 @@ time_step = .0001
 
 # Angle offset
 testOffset = 90 #angle offset for test *****DEGREES*****
+testOffsetRAD = testOffset*3.14/180
 motorOff1 = 0 #motor1 bottom
 motorOff2 = .43+(testOffset*3.14/180) #motor2 top
 #motorOff3 = 0
@@ -63,7 +64,7 @@ class PID(object):
         self.kp = KP
         self.ki = KI
         self.kd = KD
-        self.target = target * motorDir
+        self.target = target
         self.error = 0
         self.error_integral = 0
         self.error_last = 0
@@ -84,7 +85,7 @@ class PID(object):
         self.output = self.kp*self.error + self.ki*self.error_integral + self.kd*self.error_derivative
 
         self.prevTime = self.currentTime
-        # Limits
+        #Limits
         if self.output > 50:
             self.output = 50
         if self.output < -50:
@@ -112,8 +113,8 @@ def graph(x,y):
     plt.plot(x, y)
     plt.show()
 
-motor1 = Motor(vertiq1, P, I, D, targetSpeed1, motorOff1, motorDir1)
-motor2 = Motor(vertiq2, P, I, D, targetSpeed2, motorOff2, motorDir2)
+motor1 = Motor(vertiq1, P, I, D, targetSpeed, motorOff1, motorDir1)
+motor2 = Motor(vertiq2, P, I, D, targetSpeed, motorOff2, motorDir2)
 #motor3 = Motor(vertiq3, P, I, D, targetSpeed, motorOff3)
 #motor4 = Motor(vertiq4, P, I, D, targetSpeed, motorOff4)
 motors = [motor1, motor2]#, motor3, motor4]
@@ -142,14 +143,7 @@ for motor in motors:
 
 time.sleep(1.5)
 
-# Store start time of Program
-startTime = time.time()
 
-
-for motor in motors:
-    #motor.vertiq.set("multi_turn_angle_control", "ctrl_velocity", targetSpeed)
-    motor.PID.startTime = startTime
-    motor.PID.prevTime = startTime
 
 # MATPLOTLIB
 #poses = np.array([])
@@ -170,26 +164,49 @@ if value == 'b' or value == 'B':
     pause = False
     
     
+# Store start time of Program
+startTime = time.time()
 
+
+for motor in motors:
+    #motor.vertiq.set("multi_turn_angle_control", "ctrl_velocity", targetSpeed)
+    motor.PID.startTime = startTime
+    motor.PID.prevTime = startTime
 #PID
 print("Now Beginning PID-Phase Control\n")
 print("Press S to stop test\n")
-while PID: #PID...wait for keyboard input to stop phase control
-    for index, motor in enumerate(motors):
-        obsDisplacement = motor.vertiq.get("multi_turn_angle_control", "obs_angular_displacement")
-        if obsDisplacement is not None:
-            velocity = motor.PID.compute(obsDisplacement)
-            motor.vertiq.set("multi_turn_angle_control", "ctrl_velocity", targetSpeed + velocity)
+# while PID: #PID...wait for keyboard input to stop phase control
+#     for index, motor in enumerate(motors):
+#         obsDisplacement = motor.vertiq.get("multi_turn_angle_control", "obs_angular_displacement")
+#         if obsDisplacement is not None:
+#             velocity = motor.PID.compute(obsDisplacement)
+#             motor.vertiq.set("multi_turn_angle_control", "ctrl_velocity", targetSpeed + velocity)
 
+# while PID: #PID...wait for keyboard input to stop phase control
+#     for index, motor in enumerate(motors):
+#         obsDisplacement = motor.vertiq.get("multi_turn_angle_control", "obs_angular_displacement")
+#         if obsDisplacement is not None:
+#             velocity = motor.PID.compute(obsDisplacement)
+#             motor.vertiq.set("multi_turn_angle_control", "ctrl_velocity", motor.get_offset()*targetSpeed + velocity)
+
+while PID:
+    obsDisplacement1 = motor1.vertiq.get("multi_turn_angle_control", "obs_angular_displacement")
+    if obsDisplacement1 is not None:
+        velocity1 = motor1.PID.compute(obsDisplacement1)
+        motor1.vertiq.set("multi_turn_angle_control", "ctrl_velocity", motorDir1*(targetSpeed + velocity1))
+    obsDisplacement2 = motor2.vertiq.get("multi_turn_angle_control", "obs_angular_displacement")
+    if obsDisplacement2 is not None:
+        velocity2 = motor2.PID.compute(obsDisplacement2)
+        motor2.vertiq.set("multi_turn_angle_control", "ctrl_velocity", motorDir2*(targetSpeed + velocity2))
             #print("Motor %s: Position Error: %s" % (index+1, motor.PID.error))
 
-            """
-            print(motor1.PID.error)
+            # """
+            # print(motor1.PID.error)
            
-            if (time.time()-startTime > 9):
-                poses = np.append(poses, velocity)
-                times = np.append(times, motor1.PID.currentTime)
-            """
+            # if (time.time()-startTime > 9):
+            #     poses = np.append(poses, velocity)
+            #     times = np.append(times, motor1.PID.currentTime)
+            # """
     if keyboard.is_pressed('s'):  # if key 'z' is pressed 
                 print("Test stopped\n")
                 PID = False
