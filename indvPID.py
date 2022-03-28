@@ -209,14 +209,14 @@ time.sleep(1.5)
 #poses = np.array([])
 #times = np.array([])
    
-# i = 0
-# print("Now Beginning Ramp-Up\n")
-# while i < targetSpeed: #Ramp up... wait for current == target speed
-#     motor1.vertiq.set("multi_turn_angle_control", "ctrl_velocity", i)
-#     motor2.vertiq.set("multi_turn_angle_control", "ctrl_velocity", -i)
-#     i = i + 1
-#     time.sleep(.05)
-#     print(motor1.vertiq.get("multi_turn_angle_control", "ctrl_velocity"))
+i = 0
+print("Now Beginning Ramp-Up\n")
+while i < targetSpeed: #Ramp up... wait for current == target speed
+    motor1.vertiq.set("multi_turn_angle_control", "ctrl_velocity", i)
+    motor2.vertiq.set("multi_turn_angle_control", "ctrl_velocity", -i)
+    i = i + 1
+    time.sleep(.05)
+    print(motor1.vertiq.get("multi_turn_angle_control", "ctrl_velocity"))
 
 #Hold speed... wait for keyboard input to start PID (Before data aqu starts)
 value = input("Press B to begin test\n")
